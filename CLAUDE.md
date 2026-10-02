@@ -15,9 +15,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   stop and raise it rather than altering an existing signature or behavior.
 - Every crate README opens with the badge block: crates.io, docs.rs, CI,
   license, and rustc.
+- Crate READMEs are short and written for crates.io: the badge block, a
+  sentence or two on what the crate is, the "Types", "Traits" and "Features"
+  lists, a usage example of ten lines or fewer, a short security note and the
+  license. Behaviour belongs in the rustdoc, and validation and release
+  commands in the root README.
 - Crate READMEs use no Markdown tables; crates.io renders them badly. Traits,
-  types and features are flat one-line bullets (`` `Item` — what it does. ``),
-  with any further detail in the paragraph below the list. Benchmark results
+  types and features are flat one-line bullets (`` `Item` — what it does. ``). Benchmark results
   and how to reproduce them live in the crate's `BENCHES.md`, which is in the
   `include` list, and the README links to it. `BENCHES.md` is read on GitHub,
   so its results may use tables.

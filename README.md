@@ -45,6 +45,18 @@ targets and each crate's dependency set on each target, checks the build on
 Rust 1.85.0, and verifies the package archive. See
 [.github/workflows/ci.yml](.github/workflows/ci.yml).
 
+Before a release, check each archive and run publication validation from a
+committed checkout:
+
+```text
+cargo package -p <crate> --list --locked
+cargo publish -p <crate> --dry-run --locked
+```
+
+The archive must include both license texts, the crate README, the changelog,
+the source and the integration tests, and no `target/` or other build
+artifacts.
+
 ## License
 
 Licensed under either the [MIT license](LICENSE-MIT) or the
