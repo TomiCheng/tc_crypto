@@ -6,6 +6,20 @@ use tc_zeroize::{Zeroize, Zeroizing};
 use super::shared;
 use crate::{BufferedCipher, BufferedCipherInit, BufferedError, CipherDirection};
 
+/// An unpadded buffering layer over the block-cipher mode `C` with blocks of
+/// `N` bytes, kept inline for builds without an allocator; Bouncy Castle's
+/// `BufferedBlockCipher`.
+///
+/// It takes input in pieces of any size, passes every complete block to the
+/// mode at once and keeps a trailing partial block for `do_final`, which only
+/// modes such as CFB, OFB and CTR can finish; ECB and CBC need whole blocks.
+///
+/// Constant time exactly when the mode is: the buffering branches and copies
+/// only on lengths, which are public. Its two blocks of buffer are wiped on
+/// reset and on drop.
+///
+/// # Example
+///
 /// ```
 /// use tc_aes::AesEngine;
 /// use tc_block_modes::{FixedCbcBlockCipher, KeyWithIvRef};
@@ -43,6 +57,11 @@ pub struct FixedBufferedBlockCipher<C, const N: usize> {
 }
 
 impl<C: BlockCipherMode, const N: usize> FixedBufferedBlockCipher<C, N> {
+    /// Buffers `cipher_mode` in two inline blocks of `N` bytes. Constant time.
+    ///
+    /// # Panics
+    ///
+    /// Panics unless `N` is positive and equal to the mode's block size.
     pub fn new(cipher_mode: C) -> Self {
         assert!(
             N > 0 && cipher_mode.block_size() == N,
@@ -58,6 +77,7 @@ impl<C: BlockCipherMode, const N: usize> FixedBufferedBlockCipher<C, N> {
         }
     }
 
+    /// Returns the wrapped mode. Constant time.
     pub const fn underlying_cipher(&self) -> &C {
         &self.cipher_mode
     }
@@ -71,12 +91,19 @@ impl<C: BlockCipherMode, const N: usize> FixedBufferedBlockCipher<C, N> {
 }
 
 impl<C: BlockCipher, const N: usize> FixedBufferedBlockCipher<EcbBlockCipher<C>, N> {
+    /// Buffers `cipher` in ECB mode, as Bouncy Castle does for a bare block
+    /// cipher. Constant time.
+    ///
+    /// # Panics
+    ///
+    /// Panics unless `N` is positive and equal to the cipher's block size.
     pub fn from_cipher(cipher: C) -> Self {
         Self::new(EcbBlockCipher::new(cipher))
     }
 }
 
 impl<C: Display, const N: usize> Display for FixedBufferedBlockCipher<C, N> {
+    /// Writes the mode's name, such as `"AES/CBC"`. Constant time.
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         self.cipher_mode.fmt(f)
     }
@@ -89,18 +116,27 @@ where
 {
     type Error = BufferedError<C::Error>;
 
+    /// Returns the mode's block size. Constant time.
     fn block_size(&self) -> usize {
         N
     }
 
+    /// Returns how many bytes the next `process_bytes` writes for `input_len`
+    /// more bytes: every block they complete. Constant time: it reads only
+    /// lengths.
     fn update_output_len(&self, input_len: usize) -> Result<usize, Self::Error> {
         shared::update_output_len(self.buffered, N, input_len, false)
     }
 
+    /// Returns how many bytes `process_bytes` and `do_final` write together for
+    /// `input_len` more bytes: the buffered input and the new input.
+    /// Constant time: it reads only lengths.
     fn output_len(&self, input_len: usize) -> Result<usize, Self::Error> {
         shared::output_len(self.buffered, input_len)
     }
 
+    /// Buffers `input`, passes every block it completes to the mode and returns
+    /// the bytes written. Constant time exactly when the mode is.
     fn process_bytes(&mut self, input: &[u8], output: &mut [u8]) -> Result<usize, Self::Error> {
         if !self.initialized {
             return Err(BufferedError::NotInitialized);
@@ -115,6 +151,10 @@ where
         )
     }
 
+    /// Finishes a trailing partial block through the mode, which only modes
+    /// such as CFB, OFB and CTR allow; ECB and CBC report
+    /// `IncompleteLastBlock`. The buffers are wiped and the mode reset whether
+    /// or not it succeeds. Constant time exactly when the mode is.
     fn do_final(&mut self, output: &mut [u8]) -> Result<usize, Self::Error> {
         let result = if self.initialized {
             shared::do_final(
@@ -132,6 +172,8 @@ where
         result
     }
 
+    /// Discards the buffered input, wipes the buffers and resets the mode.
+    /// Constant time.
     fn reset(&mut self) {
         self.reset_state();
     }
@@ -144,6 +186,9 @@ where
 {
     type Error = <C as BlockCipherInit<P>>::Error;
 
+    /// Initializes the mode in `direction` with `params` and discards any
+    /// buffered input; a failed `init` leaves the adapter uninitialized.
+    /// Constant time exactly when the mode's initialization is.
     fn init(&mut self, direction: CipherDirection, params: &P) -> Result<(), Self::Error> {
         self.initialized = false;
         self.reset_state();

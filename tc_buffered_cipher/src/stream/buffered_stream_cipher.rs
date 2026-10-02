@@ -3,6 +3,18 @@ use tc_stream_cipher::{StreamCipher, StreamCipherInit};
 
 use crate::{BufferedCipher, BufferedCipherInit, BufferedError, CipherDirection};
 
+/// Puts the stream cipher `C` behind the `BufferedCipher` interface; Bouncy
+/// Castle's `BufferedStreamCipher`.
+///
+/// A stream cipher holds nothing back, so every call writes as much as it
+/// reads, the block size is zero, and `do_final` writes nothing and restarts
+/// the keystream.
+///
+/// Constant time exactly when the engine is: the adapter checks only public
+/// lengths before passing each call on.
+///
+/// # Example
+///
 /// ```
 /// use tc_buffered_cipher::{BufferedCipher, BufferedCipherInit, BufferedStreamCipher, CipherDirection};
 /// use tc_chacha::ChaCha7539Engine;
@@ -34,6 +46,7 @@ pub struct BufferedStreamCipher<C> {
 }
 
 impl<C> BufferedStreamCipher<C> {
+    /// Wraps `cipher`; call `init` before use. Constant time.
     pub const fn new(cipher: C) -> Self {
         Self {
             cipher,
@@ -41,12 +54,14 @@ impl<C> BufferedStreamCipher<C> {
         }
     }
 
+    /// Returns the wrapped stream cipher. Constant time.
     pub const fn underlying_cipher(&self) -> &C {
         &self.cipher
     }
 }
 
 impl<C: Display> Display for BufferedStreamCipher<C> {
+    /// Writes the engine's name, such as `"ChaCha7539"`. Constant time.
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         self.cipher.fmt(f)
     }
@@ -59,18 +74,25 @@ where
 {
     type Error = BufferedError<C::Error>;
 
+    /// Returns zero, as for every stream cipher. Constant time.
     fn block_size(&self) -> usize {
         0
     }
 
+    /// Returns `input_len`: a stream cipher writes as much as it reads.
+    /// Constant time.
     fn update_output_len(&self, input_len: usize) -> Result<usize, Self::Error> {
         Ok(input_len)
     }
 
+    /// Returns `input_len`: a stream cipher writes as much as it reads.
+    /// Constant time.
     fn output_len(&self, input_len: usize) -> Result<usize, Self::Error> {
         Ok(input_len)
     }
 
+    /// Transforms one byte through the engine's `return_byte`. Constant time
+    /// exactly when the engine is.
     fn process_byte(&mut self, input: u8, output: &mut [u8]) -> Result<usize, Self::Error> {
         if !self.initialized {
             return Err(BufferedError::NotInitialized);
@@ -88,6 +110,8 @@ where
         Ok(1)
     }
 
+    /// Transforms `input` into `output` through the engine and returns its
+    /// length. Constant time exactly when the engine is.
     fn process_bytes(&mut self, input: &[u8], output: &mut [u8]) -> Result<usize, Self::Error> {
         if !self.initialized {
             return Err(BufferedError::NotInitialized);
@@ -103,6 +127,8 @@ where
             .map_err(BufferedError::Cipher)
     }
 
+    /// Writes nothing and restarts the keystream, as `reset` does.
+    /// Constant time exactly when the engine's reset is.
     fn do_final(&mut self, _output: &mut [u8]) -> Result<usize, Self::Error> {
         if !self.initialized {
             return Err(BufferedError::NotInitialized);
@@ -111,6 +137,8 @@ where
         Ok(0)
     }
 
+    /// Restarts the keystream from where the last `init` set it. Constant time
+    /// exactly when the engine's reset is.
     fn reset(&mut self) {
         self.cipher.reset();
     }
@@ -123,6 +151,9 @@ where
 {
     type Error = <C as StreamCipherInit<P>>::Error;
 
+    /// Initializes the engine in `direction` with `params`; a failed `init`
+    /// leaves the adapter uninitialized. Constant time exactly when the
+    /// engine's initialization is.
     fn init(&mut self, direction: CipherDirection, params: &P) -> Result<(), Self::Error> {
         self.initialized = false;
         self.cipher.init(direction.into(), params)?;
