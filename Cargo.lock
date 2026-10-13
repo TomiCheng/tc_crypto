@@ -37,6 +37,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "tc_asym_cipher"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "728e908bd7a2ec354a667a7520c0be5b12fc7f51731e5aea2bf5010e59ad127c"
+
+[[package]]
 name = "tc_block_cipher"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -63,11 +69,12 @@ checksum = "fd48e2241de64995ba803397f5557cc52b82e40e5e25d1ae16422d8713627db7"
 
 [[package]]
 name = "tc_buffered_cipher"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "tc_aead_cipher",
  "tc_aes",
  "tc_ascon_aead",
+ "tc_asym_cipher",
  "tc_block_cipher",
  "tc_block_modes",
  "tc_block_padding",

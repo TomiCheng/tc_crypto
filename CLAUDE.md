@@ -33,11 +33,13 @@ The crate list and workspace-wide checks live in the root
 `tc_buffered_cipher` holds the `BufferedCipher` and `BufferedCipherInit`
 contracts, the Rust form of Bouncy Castle's `IBufferedCipher`, its own
 `CipherDirection` with `From` conversions to and from those of
-`tc_block_cipher` and `tc_stream_cipher`, `BufferedError`, and one adapter per
+`tc_block_cipher`, `tc_stream_cipher` and `tc_asym_cipher`, `BufferedError`,
+and one adapter per
 family under Bouncy Castle's names: the block adapters over `tc_block_modes`,
 the padded ones over `tc_block_padding`, `BufferedStreamCipher` over
 `tc_stream_cipher`, and `BufferedAeadBlockCipher` and `BufferedAeadCipher`
-over `tc_aead_cipher`. It depends on those crates and `tc_zeroize` on every
+over `tc_aead_cipher`. It depends on those crates, `tc_asym_cipher` and
+`tc_zeroize` on every
 target, and CI enforces that set with `cargo tree` on the
 `wasm32-unknown-unknown`, `aarch64-unknown-none` and x86 targets. Its only
 feature, `alloc`, is default-off and adds `BufferedBlockCipher` and

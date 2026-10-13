@@ -15,7 +15,8 @@
 //! Every adapter takes input in pieces of any size, holds back what its cipher
 //! cannot process yet and finishes in `do_final`; the sizing methods say how
 //! much each call writes. [`CipherDirection`] converts to and from the
-//! block-cipher and stream-cipher contracts' own directions. [`BufferedError`]
+//! block-cipher, stream-cipher and asymmetric-block-cipher contracts' own
+//! directions. [`BufferedError`]
 //! carries the failures of the block and stream adapters, while the AEAD
 //! adapters report their engine's error.
 //!

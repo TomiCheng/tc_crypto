@@ -2,6 +2,19 @@
 
 All notable changes to `tc_buffered_cipher` are documented in this file.
 
+## 0.1.1 - Unreleased
+
+### Added
+
+- `From` conversions between `CipherDirection` and the direction of
+  `tc_asym_cipher`, in both directions.
+
+### Compatibility
+
+- Adds a dependency on `tc_asym_cipher` 0.1, which has no dependencies, needs
+  no allocator and requires Rust 1.85.
+- No public signature changes.
+
 ## 0.1.0 - 2026-10-02
 
 Initial release.

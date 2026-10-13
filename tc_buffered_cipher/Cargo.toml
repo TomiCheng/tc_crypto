@@ -1,6 +1,6 @@
 [package]
 name = "tc_buffered_cipher"
-version = "0.1.0"
+version = "0.1.1"
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
@@ -21,6 +21,7 @@ alloc = ["tc_zeroize/alloc"]
 
 [dependencies]
 tc_aead_cipher = "0.1.0"
+tc_asym_cipher = "0.1.0"
 tc_block_cipher = "0.1.0"
 tc_stream_cipher = "0.1.0"
 tc_block_modes = "0.1.0"
