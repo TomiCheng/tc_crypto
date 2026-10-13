@@ -33,28 +33,34 @@ The crate list and workspace-wide checks live in the root
 `tc_buffered_cipher` holds the `BufferedCipher` and `BufferedCipherInit`
 contracts, the Rust form of Bouncy Castle's `IBufferedCipher`, its own
 `CipherDirection` with `From` conversions to and from those of
-`tc_block_cipher` and `tc_stream_cipher`, `BufferedError`, and one adapter per
-family under Bouncy Castle's names: the block adapters over `tc_block_modes`,
-the padded ones over `tc_block_padding`, `BufferedStreamCipher` over
-`tc_stream_cipher`, and `BufferedAeadBlockCipher` and `BufferedAeadCipher`
-over `tc_aead_cipher`. It depends on those crates and `tc_zeroize` on every
-target, and CI enforces that set with `cargo tree` on the
-`wasm32-unknown-unknown`, `aarch64-unknown-none` and x86 targets. Its only
-feature, `alloc`, is default-off and adds `BufferedBlockCipher` and
-`PaddedBufferedBlockCipher`, which size their buffers from the mode at run
-time; the `Fixed` forms keep theirs inline. The stream and AEAD support is
-deliberately not behind features: making it optional now would break builds
-that disable default features.
+`tc_block_cipher`, `tc_stream_cipher` and `tc_asym_cipher`, `BufferedError`,
+and one adapter per family under Bouncy Castle's names: the block adapters over
+`tc_block_modes`, the padded ones over `tc_block_padding`,
+`BufferedStreamCipher` over `tc_stream_cipher`, `BufferedAeadBlockCipher` and
+`BufferedAeadCipher` over `tc_aead_cipher`, and the asymmetric adapters over
+`tc_asym_cipher`. It depends on those crates and `tc_zeroize` on every target,
+and CI enforces that set with `cargo tree` on the `wasm32-unknown-unknown`,
+`aarch64-unknown-none` and x86 targets. Its only feature, `alloc`, is
+default-off and adds `BufferedBlockCipher`, `PaddedBufferedBlockCipher` and
+`BufferedAsymmetricBlockCipher`, which size their buffers from the mode or the
+key at run time; the `Fixed` forms keep theirs inline. The stream, AEAD and
+asymmetric support is deliberately not behind features: making it optional now
+would break builds that disable default features.
 
 The traits keep their error and parameter types generic and need no
 allocator; type erasure for a name-based factory belongs to a crate built on
 top, not here. Parameter types only carry values, and the wrapped cipher
-validates them in `init`. The block and stream adapters report
+validates them in `init`. The block, stream and asymmetric adapters report
 `BufferedError`; the AEAD adapters keep their engine's error type so that a
 failed tag check or a refused nonce reuse arrives unchanged, and `Display` on
 `BufferedError` describes only its own layer, leaving the cipher's error to
 `source`. The `Fixed` block adapters panic in `new` when `N` differs from the
-mode's block size. Padded encryption follows a full final block with a block
+mode's block size. An asymmetric cipher's block is known only once `init` has
+the key, so `FixedBufferedAsymmetricBlockCipher` takes `N` as an upper bound
+and fails `init` with `BufferTooSmall` instead; both asymmetric adapters wrap
+the cipher's `init` error in `BufferedError` so they swap freely. Encrypting,
+they buffer one byte more than the input block, as Bouncy Castle does for
+callers who pad on their own over a raw cipher. Padded encryption follows a full final block with a block
 of padding alone, whatever the scheme, as Bouncy Castle does.
 
 Every adapter is constant time exactly when the cipher it wraps is; lengths

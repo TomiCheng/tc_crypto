@@ -20,7 +20,8 @@ pub enum BufferedError<E = Infallible> {
         /// The length of the output buffer that was supplied, in bytes.
         available: usize,
     },
-    /// The length of the input exceeds what can be counted.
+    /// The length of the input exceeds what can be counted, or, for an
+    /// asymmetric cipher, what one block takes.
     InputTooLong,
     /// Finalization found a trailing partial block it cannot resolve.
     ///
@@ -34,6 +35,14 @@ pub enum BufferedError<E = Infallible> {
     CorruptPadding,
     /// The padding scheme could not pad the final block.
     PaddingFailed,
+    /// A fixed-size adapter's buffer is shorter than the cipher needs under the
+    /// key given to `init`.
+    BufferTooSmall {
+        /// The buffer length the cipher needs, in bytes.
+        required: usize,
+        /// The length of the adapter's buffer, in bytes.
+        available: usize,
+    },
     /// The wrapped cipher failed; [`source`](Error::source) returns its error.
     Cipher(E),
 }
@@ -55,6 +64,13 @@ impl<E> fmt::Display for BufferedError<E> {
             Self::IncompleteLastBlock => f.write_str("last block incomplete"),
             Self::CorruptPadding => f.write_str("pad block corrupted"),
             Self::PaddingFailed => f.write_str("padding could not be added"),
+            Self::BufferTooSmall {
+                required,
+                available,
+            } => write!(
+                f,
+                "fixed buffer is too short: requires {required} bytes, has {available}"
+            ),
             Self::Cipher(_) => f.write_str("underlying cipher failed"),
         }
     }

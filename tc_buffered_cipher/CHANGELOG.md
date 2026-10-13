@@ -2,6 +2,33 @@
 
 All notable changes to `tc_buffered_cipher` are documented in this file.
 
+## 0.1.1 - 2026-10-13
+
+### Added
+
+- `From` conversions between `CipherDirection` and the direction of
+  `tc_asym_cipher`, in both directions.
+- `FixedBufferedAsymmetricBlockCipher` and, with `alloc`,
+  `BufferedAsymmetricBlockCipher`: Bouncy Castle's
+  `BufferedAsymmetricBlockCipher` over a `tc_asym_cipher` engine or encoding,
+  such as RSA with PKCS#1 v1.5 or OAEP. Input is buffered until `do_final`,
+  which passes it to the cipher as one block; encrypting buffers one byte more
+  than the input block, as Bouncy Castle does. The fixed form's `N` is an upper
+  bound, and `init` fails when the key needs more.
+- `BufferedError::BufferTooSmall`, which that failure reports.
+  `BufferedError::InputTooLong` now also reports a message that outgrows an
+  asymmetric block.
+- Tests of both asymmetric adapters over RSA with PKCS#1 v1.5 at every split
+  of the input, of the extra byte when encrypting with a raw engine, and of the
+  error paths; doctests for both.
+
+### Compatibility
+
+- Adds a dependency on `tc_asym_cipher` 0.1, which has no dependencies, needs
+  no allocator and requires Rust 1.85.
+- No public signature changes. `BufferedError` is `non_exhaustive`, so the
+  new variant breaks no match.
+
 ## 0.1.0 - 2026-10-02
 
 Initial release.

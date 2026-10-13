@@ -1,11 +1,12 @@
 # tc_crypto
 
-A Rust workspace for crates that build on the block-cipher, stream-cipher and
-AEAD contracts together:
+A Rust workspace for crates that build on the block-cipher, stream-cipher,
+AEAD and asymmetric-block-cipher contracts together:
 [`tc_block_cipher`](https://crates.io/crates/tc_block_cipher),
-[`tc_stream_cipher`](https://crates.io/crates/tc_stream_cipher) and
-[`tc_aead_cipher`](https://crates.io/crates/tc_aead_cipher). It holds
-`tc_buffered_cipher`, which puts all three families behind one buffered
+[`tc_stream_cipher`](https://crates.io/crates/tc_stream_cipher),
+[`tc_aead_cipher`](https://crates.io/crates/tc_aead_cipher) and
+[`tc_asym_cipher`](https://crates.io/crates/tc_asym_cipher). It holds
+`tc_buffered_cipher`, which puts all four families behind one buffered
 interface. Each crate is published separately and keeps its own README,
 changelog, and validation commands.
 
@@ -17,7 +18,7 @@ changelog, and validation commands.
 
 | Crate | Version | Description |
 | --- | --- | --- |
-| [`tc_buffered_cipher`](tc_buffered_cipher) | [![crates.io](https://img.shields.io/crates/v/tc_buffered_cipher.svg)](https://crates.io/crates/tc_buffered_cipher) [![docs.rs](https://docs.rs/tc_buffered_cipher/badge.svg)](https://docs.rs/tc_buffered_cipher) | The `BufferedCipher` and `BufferedCipherInit` contracts, the Rust form of Bouncy Castle's `IBufferedCipher`, with adapters for block modes with or without padding, stream ciphers and AEADs. `no_std`, no `unsafe`; a default-off `alloc` feature adds block adapters sized at run time. Constant time exactly when the wrapped cipher is; padded decryption is a padding oracle and is documented as one. |
+| [`tc_buffered_cipher`](tc_buffered_cipher) | [![crates.io](https://img.shields.io/crates/v/tc_buffered_cipher.svg)](https://crates.io/crates/tc_buffered_cipher) [![docs.rs](https://docs.rs/tc_buffered_cipher/badge.svg)](https://docs.rs/tc_buffered_cipher) | The `BufferedCipher` and `BufferedCipherInit` contracts, the Rust form of Bouncy Castle's `IBufferedCipher`, with adapters for block modes with or without padding, stream ciphers, AEADs and asymmetric block ciphers. `no_std`, no `unsafe`; a default-off `alloc` feature adds adapters sized at run time. Constant time exactly when the wrapped cipher is; padded decryption is a padding oracle and is documented as one. |
 
 ## Requirements
 
