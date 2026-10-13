@@ -1,5 +1,6 @@
 //! One buffered interface over block modes with or without padding, stream
-//! ciphers and AEADs: the [`BufferedCipher`] and [`BufferedCipherInit`]
+//! ciphers, AEADs and asymmetric block ciphers: the [`BufferedCipher`] and
+//! [`BufferedCipherInit`]
 //! contracts, the Rust form of Bouncy Castle's `IBufferedCipher`, and the
 //! adapters that put each family behind them.
 //!
@@ -11,18 +12,21 @@
 //! - [`BufferedAeadBlockCipher`] and [`BufferedAeadCipher`] — a
 //!   `tc_aead_cipher` mode over a block cipher, or an AEAD that carries its own
 //!   primitive.
+//! - [`FixedBufferedAsymmetricBlockCipher`] and `BufferedAsymmetricBlockCipher`
+//!   (`alloc`) — a `tc_asym_cipher` engine or encoding, such as RSA with
+//!   PKCS#1 v1.5 or OAEP, taking its one block in pieces.
 //!
 //! Every adapter takes input in pieces of any size, holds back what its cipher
 //! cannot process yet and finishes in `do_final`; the sizing methods say how
 //! much each call writes. [`CipherDirection`] converts to and from the
 //! block-cipher, stream-cipher and asymmetric-block-cipher contracts' own
 //! directions. [`BufferedError`]
-//! carries the failures of the block and stream adapters, while the AEAD
-//! adapters report their engine's error.
+//! carries the failures of the block, stream and asymmetric adapters, while
+//! the AEAD adapters report their engine's error.
 //!
 //! The crate is `no_std` and contains no `unsafe` code. The default-off `alloc`
-//! feature adds the adapters that size their buffers from the mode at run
-//! time; the `Fixed` forms keep theirs inline.
+//! feature adds the adapters that size their buffers from the mode or the key
+//! at run time; the `Fixed` forms keep theirs inline.
 //!
 //! Every adapter documents its timing: each is constant time exactly when the
 //! cipher it wraps is, and lengths are public. Padded decryption needs care: the
@@ -74,6 +78,7 @@
 extern crate alloc;
 
 mod aead;
+mod asym;
 mod block;
 mod cipher_direction;
 mod errors;
@@ -82,6 +87,9 @@ mod traits;
 
 pub use aead::BufferedAeadBlockCipher;
 pub use aead::BufferedAeadCipher;
+#[cfg(feature = "alloc")]
+pub use asym::BufferedAsymmetricBlockCipher;
+pub use asym::FixedBufferedAsymmetricBlockCipher;
 #[cfg(feature = "alloc")]
 pub use block::BufferedBlockCipher;
 pub use block::FixedBufferedBlockCipher;

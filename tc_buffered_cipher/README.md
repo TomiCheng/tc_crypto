@@ -7,7 +7,8 @@
 ![rustc](https://img.shields.io/badge/rustc-1.85+-blue.svg)
 
 One buffered interface over block modes with or without padding, stream
-ciphers and AEADs, after Bouncy Castle's `IBufferedCipher`. `no_std`, no
+ciphers, AEADs and asymmetric block ciphers, after Bouncy Castle's
+`IBufferedCipher`. `no_std`, no
 `unsafe`, Rust 1.85 or later.
 
 ## Types
@@ -19,8 +20,12 @@ ciphers and AEADs, after Bouncy Castle's `IBufferedCipher`. `no_std`, no
 - `BufferedStreamCipher` — a stream cipher.
 - `BufferedAeadBlockCipher`, `BufferedAeadCipher` — an AEAD over a block
   cipher, or one that carries its own primitive.
+- `FixedBufferedAsymmetricBlockCipher`, `BufferedAsymmetricBlockCipher`
+  (`alloc`) — an asymmetric cipher or encoding, such as RSA with OAEP, fed in
+  pieces.
 - `CipherDirection` — encryption or decryption.
-- `BufferedError` — the failures of the block and stream adapters.
+- `BufferedError` — the failures of the block, stream and asymmetric
+  adapters.
 
 ## Traits
 
@@ -29,7 +34,7 @@ ciphers and AEADs, after Bouncy Castle's `IBufferedCipher`. `no_std`, no
 
 ## Features
 
-- `alloc` (off by default) — the block adapters sized at run time.
+- `alloc` (off by default) — the adapters sized at run time.
 
 ## Usage
 

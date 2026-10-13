@@ -103,6 +103,14 @@ fn every_public_api_and_implemented_trait_method_has_an_unambiguous_timing_doc()
             include_str!("../src/aead/buffered_aead_cipher.rs"),
         ),
         (
+            "asym/buffered.rs",
+            include_str!("asym/buffered.rs"),
+        ),
+        (
+            "asym/fixed.rs",
+            include_str!("asym/fixed.rs"),
+        ),
+        (
             "block/buffered_block_cipher.rs",
             include_str!("../src/block/buffered_block_cipher.rs"),
         ),

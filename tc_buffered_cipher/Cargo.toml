@@ -5,7 +5,7 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "One buffered interface over block modes with or without padding, stream ciphers and AEADs, after Bouncy Castle's IBufferedCipher."
+description = "One buffered interface over block modes with or without padding, stream ciphers, AEADs and asymmetric block ciphers, after Bouncy Castle's IBufferedCipher."
 readme = "README.md"
 documentation = "https://docs.rs/tc_buffered_cipher"
 keywords = ["cipher", "padding", "aead", "cryptography", "no-std"]
@@ -29,7 +29,10 @@ tc_block_padding = "0.1.0"
 tc_zeroize = "0.1.0"
 
 [dev-dependencies]
+rand = "0.10.3"
 tc_aes = "0.1.0"
+tc_asym_encoding = "0.1.0"
 tc_ascon_aead = "0.1.0"
 tc_chacha = "0.1.0"
 tc_block_modes = { version = "0.1.0", features = ["alloc"] }
+tc_rsa = "0.1.0"
