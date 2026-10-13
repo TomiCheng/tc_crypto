@@ -138,6 +138,6 @@ jobs:
           }
           # No dependency is platform-specific, so every target shares one set.
           for target in aarch64-unknown-none wasm32-unknown-unknown x86_64-unknown-linux-gnu i686-unknown-linux-gnu; do
-            check 'tc_aead_cipher tc_block_cipher tc_block_modes tc_block_padding tc_buffered_cipher tc_constant_time tc_stream_cipher tc_zeroize' -p tc_buffered_cipher --target "$target"
-            check 'tc_aead_cipher tc_block_cipher tc_block_modes tc_block_padding tc_buffered_cipher tc_constant_time tc_stream_cipher tc_zeroize' -p tc_buffered_cipher --target "$target" --features alloc
+            check 'tc_aead_cipher tc_asym_cipher tc_block_cipher tc_block_modes tc_block_padding tc_buffered_cipher tc_constant_time tc_stream_cipher tc_zeroize' -p tc_buffered_cipher --target "$target"
+            check 'tc_aead_cipher tc_asym_cipher tc_block_cipher tc_block_modes tc_block_padding tc_buffered_cipher tc_constant_time tc_stream_cipher tc_zeroize' -p tc_buffered_cipher --target "$target" --features alloc
           done
