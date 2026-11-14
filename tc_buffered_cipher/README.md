@@ -40,7 +40,7 @@ ciphers, AEADs and asymmetric block ciphers, after Bouncy Castle's
 
 ```toml
 [dependencies]
-tc_buffered_cipher = "0.1.0"
+tc_buffered_cipher = "0.2.0"
 tc_block_modes = "0.1.0"
 tc_aes = "0.1.0"
 ```
