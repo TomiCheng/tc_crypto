@@ -120,15 +120,15 @@ dependencies = [
 
 [[package]]
 name = "tc_asym_cipher"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "728e908bd7a2ec354a667a7520c0be5b12fc7f51731e5aea2bf5010e59ad127c"
+checksum = "3fa3176b9a4bad48d0a16f5d0315714a4a8cdaeaad7438361b3e2f8923ffb31b"
 
 [[package]]
 name = "tc_asym_encoding"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3257e241c63ff4172997dfd376909b46997ce046487095002ce0db69ab0a652b"
+checksum = "812285595c08c6c0ae8a6fb754ff2c3d626ad17169bcee3fb449f892eccca45e"
 dependencies = [
  "rand_core",
  "tc_asym_cipher",
@@ -240,9 +240,9 @@ dependencies = [
 
 [[package]]
 name = "tc_rsa"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bbc1738fce9354391cdb5650979996c22a05ddec67fe85b41b25e6021d582d33"
+checksum = "b1a89f2a12436f89af62cd7dcd513899a84b7c2591192baa6bcd337d07530b13"
 dependencies = [
  "num-traits",
  "rand_core",

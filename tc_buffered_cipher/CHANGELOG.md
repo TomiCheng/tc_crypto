@@ -2,6 +2,16 @@
 
 All notable changes to `tc_buffered_cipher` are documented in this file.
 
+## 0.2.0 - Unreleased
+
+### Compatibility
+
+- **Breaking:** depends on `tc_asym_cipher` 0.2, whose `AsymmetricBlockCipher`,
+  `AsymmetricBlockCipherInit` and `CipherDirection` the asymmetric adapters and
+  the `From` conversions take, so they run over the engines of `tc_rsa` 0.2 and
+  the encodings of `tc_asym_encoding` 0.2. The adapters themselves are
+  unchanged.
+
 ## 0.1.1 - 2026-10-13
 
 ### Added
