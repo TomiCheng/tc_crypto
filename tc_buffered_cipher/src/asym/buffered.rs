@@ -31,11 +31,11 @@ use crate::{BufferedCipher, BufferedCipherInit, BufferedError, CipherDirection};
 /// use tc_buffered_cipher::{
 ///     BufferedAsymmetricBlockCipher, BufferedCipher, BufferedCipherInit, CipherDirection,
 /// };
-/// use tc_rsa::{RsaEngine, RsaKeyGenerationParamsOwned, RsaKeyGenerator};
+/// use tc_rsa::{RsaEngine, RsaKeyGenerationParams, RsaKeyGenerator};
 ///
 /// // A 2048-bit key pair, whose modulus is 256 bytes.
-/// let mut generator = RsaKeyGenerator::new();
-/// generator.init(RsaKeyGenerationParamsOwned::new(rand::rng()))?;
+/// let mut generator = RsaKeyGenerator::new(rand::rng());
+/// generator.init(&RsaKeyGenerationParams::new())?;
 /// let (public, private) = generator.generate_key_pair()?;
 ///
 /// // The buffer is sized from the key at `init`, so no size appears in the type.
