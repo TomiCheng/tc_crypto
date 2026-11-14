@@ -11,7 +11,7 @@ use tc_buffered_cipher::{
     BufferedAsymmetricBlockCipher, BufferedCipher, BufferedCipherInit, BufferedError,
     CipherDirection, FixedBufferedAsymmetricBlockCipher,
 };
-use tc_rsa::{RsaEngine, RsaKey, RsaKeyGenerationParamsOwned, RsaKeyGenerator};
+use tc_rsa::{RsaEngine, RsaKey, RsaKeyGenerationParams, RsaKeyGenerator};
 
 /// The modulus length of the test key in bytes.
 const K: usize = 128;
@@ -22,9 +22,9 @@ const PKCS1_LIMIT: usize = K - 11;
 fn keys() -> &'static (RsaKey, RsaKey) {
     static KEYS: OnceLock<(RsaKey, RsaKey)> = OnceLock::new();
     KEYS.get_or_init(|| {
-        let mut generator = RsaKeyGenerator::new();
-        let params = RsaKeyGenerationParamsOwned::new(StdRng::seed_from_u64(1)).with_strength(1024);
-        generator.init(params).unwrap();
+        let mut generator = RsaKeyGenerator::new(StdRng::seed_from_u64(1));
+        let params = RsaKeyGenerationParams::new().with_strength(1024);
+        generator.init(&params).unwrap();
         generator.generate_key_pair().unwrap()
     })
 }
