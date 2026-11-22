@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["tc_buffered_cipher"]
+members = ["tc_buffered_cipher", "tc_cts_modes"]
 
 [workspace.package]
 edition = "2024"

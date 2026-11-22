@@ -1,0 +1,32 @@
+[package]
+name = "tc_cts_modes"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Cipher text stealing over ECB and CBC, after Bouncy Castle's CtsBlockCipher, behind the BufferedCipher interface."
+readme = "README.md"
+documentation = "https://docs.rs/tc_cts_modes"
+keywords = ["cipher", "cts", "cbc", "cryptography", "no-std"]
+categories = ["cryptography", "no-std"]
+include = ["src/**", "tests/**", "README.md", "CHANGELOG.md", "LICENSE-MIT", "LICENSE-APACHE"]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[features]
+default = []
+alloc = ["tc_zeroize/alloc"]
+
+[dependencies]
+tc_block_cipher = "0.1.0"
+tc_block_modes = "0.1.0"
+tc_buffered_cipher = { version = "0.2.0", path = "../tc_buffered_cipher" }
+tc_zeroize = "0.1.0"
+
+[dev-dependencies]
+tc_aes = "0.1.0"
+tc_des = "0.1.1"
+tc_misc_block_cipher = { version = "0.1.0", features = ["skipjack"] }
+tc_rc_cipher = "0.1.0"
