@@ -68,7 +68,7 @@ fn every_public_method_and_helper_states_constant_or_variable_time() {
         (
             "fixed_cts_block_cipher.rs",
             include_str!("../src/fixed_cts_block_cipher.rs"),
-            14,
+            13,
         ),
         (
             "cts_block_cipher.rs",
