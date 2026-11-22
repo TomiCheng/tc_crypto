@@ -209,10 +209,44 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0bcfe3e4732defe64408b706121575a0fdbd7011a3647566cd0a353daf64c165"
 
 [[package]]
+name = "tc_cts_modes"
+version = "0.1.0"
+dependencies = [
+ "tc_aes",
+ "tc_block_cipher",
+ "tc_block_modes",
+ "tc_buffered_cipher",
+ "tc_des",
+ "tc_misc_block_cipher",
+ "tc_rc_cipher",
+ "tc_zeroize",
+]
+
+[[package]]
+name = "tc_des"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7a530667b733101c83f309d6dcf382407e594c2d204f4a0f34ab2d350edb8430"
+dependencies = [
+ "tc_block_cipher",
+ "tc_zeroize",
+]
+
+[[package]]
 name = "tc_digest"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1c37ed9f10c96ccd2c46a9a2b872070772c6385621665f4ba076b6d779e6be6f"
+
+[[package]]
+name = "tc_misc_block_cipher"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "042046d2035967e2f908ed837c14204771aa74ae3c16abd93239f65033ef4c6d"
+dependencies = [
+ "tc_block_cipher",
+ "tc_zeroize",
+]
 
 [[package]]
 name = "tc_modular"
@@ -236,6 +270,16 @@ dependencies = [
  "rand_core",
  "tc_bigint",
  "tc_modular",
+]
+
+[[package]]
+name = "tc_rc_cipher"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bd32504506783de96e4b2e40d23ed66ca46f9ace579abd16e2986c026af5d210"
+dependencies = [
+ "tc_block_cipher",
+ "tc_zeroize",
 ]
 
 [[package]]

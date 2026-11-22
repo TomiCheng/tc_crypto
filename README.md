@@ -7,6 +7,7 @@ AEAD and asymmetric-block-cipher contracts together:
 [`tc_aead_cipher`](https://crates.io/crates/tc_aead_cipher) and
 [`tc_asym_cipher`](https://crates.io/crates/tc_asym_cipher). It holds
 `tc_buffered_cipher`, which puts all four families behind one buffered
+interface, and `tc_cts_modes`, cipher text stealing behind that
 interface. Each crate is published separately and keeps its own README,
 changelog, and validation commands.
 
@@ -19,6 +20,7 @@ changelog, and validation commands.
 | Crate | Version | Description |
 | --- | --- | --- |
 | [`tc_buffered_cipher`](tc_buffered_cipher) | [![crates.io](https://img.shields.io/crates/v/tc_buffered_cipher.svg)](https://crates.io/crates/tc_buffered_cipher) [![docs.rs](https://docs.rs/tc_buffered_cipher/badge.svg)](https://docs.rs/tc_buffered_cipher) | The `BufferedCipher` and `BufferedCipherInit` contracts, the Rust form of Bouncy Castle's `IBufferedCipher`, with adapters for block modes with or without padding, stream ciphers, AEADs and asymmetric block ciphers. `no_std`, no `unsafe`; a default-off `alloc` feature adds adapters sized at run time. Constant time exactly when the wrapped cipher is; padded decryption is a padding oracle and is documented as one. |
+| [`tc_cts_modes`](tc_cts_modes) | [![crates.io](https://img.shields.io/crates/v/tc_cts_modes.svg)](https://crates.io/crates/tc_cts_modes) [![docs.rs](https://docs.rs/tc_cts_modes/badge.svg)](https://docs.rs/tc_cts_modes) | Cipher text stealing over ECB and CBC, Bouncy Castle's `CtsBlockCipher`, behind the `BufferedCipher` interface: a ciphertext as long as a plaintext of at least one block. `no_std`, no `unsafe`; a default-off `alloc` feature adds the form sized at run time. Constant time exactly when the block cipher is. |
 
 ## Requirements
 
