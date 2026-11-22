@@ -218,6 +218,7 @@ dependencies = [
  "tc_buffered_cipher",
  "tc_des",
  "tc_misc_block_cipher",
+ "tc_rc_cipher",
  "tc_zeroize",
 ]
 
@@ -269,6 +270,16 @@ dependencies = [
  "rand_core",
  "tc_bigint",
  "tc_modular",
+]
+
+[[package]]
+name = "tc_rc_cipher"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bd32504506783de96e4b2e40d23ed66ca46f9ace579abd16e2986c026af5d210"
+dependencies = [
+ "tc_block_cipher",
+ "tc_zeroize",
 ]
 
 [[package]]

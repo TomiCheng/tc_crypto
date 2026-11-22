@@ -1,16 +1,18 @@
 //! `FixedCtsBlockCipher` and `CtsBlockCipher`: the three vectors of Bouncy Castle's `CTSTest`
 //! (DES ECB, DES CBC and Skipjack CBC), the AES-128 CBC-CTS of RFC 3962 appendix B, the AES
-//! ECB-CTS and single block Bouncy Castle gives, input in pieces, and the errors.
+//! ECB-CTS and single block Bouncy Castle gives, RC2 CBC-CTS from OpenSSL, input in pieces, and
+//! the errors.
 
 use tc_aes::AesEngine;
-use tc_block_cipher::KeyRef;
-use tc_block_modes::{BlockModeInitError, KeyWithIvRef};
+use tc_block_cipher::{KeyParams, KeyRef};
+use tc_block_modes::{BlockModeInitError, IvParams, KeyWithIvRef};
 use tc_buffered_cipher::{BufferedCipher, BufferedCipherInit, BufferedError, CipherDirection};
 #[cfg(feature = "alloc")]
 use tc_cts_modes::CtsBlockCipher;
 use tc_cts_modes::{Cbc, Ecb, FixedCtsBlockCipher};
 use tc_des::DesEngine;
 use tc_misc_block_cipher::skipjack::SkipjackEngine;
+use tc_rc_cipher::{Rc2Engine, Rc2Params, Rc2ParamsRef};
 
 fn bytes(hex: &str) -> Vec<u8> {
     (0..hex.len())
@@ -162,6 +164,78 @@ fn aes_ecb_cts_matches_bouncy_castle_with_both_adapters() {
     {
         let mut allocating = CtsBlockCipher::ecb(AesEngine::new());
         for (length, expected) in AES_ECB {
+            round_trip(
+                &mut allocating,
+                &params,
+                &message[..length],
+                &bytes(expected),
+            );
+        }
+    }
+}
+
+/// CBC hands its params to the engine whole, so an engine with params of its own needs one type
+/// that carries them and the IV.
+struct Rc2WithIv<'a> {
+    params: Rc2ParamsRef<'a>,
+    iv: &'a [u8],
+}
+
+impl KeyParams for Rc2WithIv<'_> {
+    fn key(&self) -> &[u8] {
+        self.params.key()
+    }
+}
+
+impl Rc2Params for Rc2WithIv<'_> {
+    fn effective_key_bits(&self) -> usize {
+        self.params.effective_key_bits()
+    }
+}
+
+impl IvParams for Rc2WithIv<'_> {
+    fn iv(&self) -> &[u8] {
+        self.iv
+    }
+}
+
+/// OpenSSL's `rc2-cbc -nopad` over the zero-padded message, with the last two blocks swapped and
+/// cut to the message length.
+const RC2_CBC: [(usize, &str); 7] = [
+    (9, "464b6b8892320705b8"),
+    (13, "4f3a692ac04d04efb8ecef2fe9"),
+    (16, "cf7eed962b9136b4b8ecef2fe9fe6681"),
+    (17, "b8ecef2fe9fe6681c61d7e4eb75ccbdbcf"),
+    (
+        31,
+        "b8ecef2fe9fe6681cf7eed962b9136b4bea02525cde38f6e5f77a7b76c2fe6",
+    ),
+    (
+        32,
+        "b8ecef2fe9fe6681cf7eed962b9136b40c58afb8d2d5709a5f77a7b76c2fe698",
+    ),
+    (
+        47,
+        "b8ecef2fe9fe6681cf7eed962b9136b45f77a7b76c2fe6980c58afb8d2d5709ae1df95538fee21c16b8a09877104e9",
+    ),
+];
+
+#[test]
+fn rc2_cbc_cts_matches_openssl_with_both_adapters() {
+    let key: Vec<u8> = (0..16).collect();
+    let message = bytes(RFC_3962_MESSAGE);
+    let params = Rc2WithIv {
+        params: Rc2ParamsRef::new(&key),
+        iv: &BC_IV,
+    };
+    let mut fixed = FixedCtsBlockCipher::<_, 8, Cbc>::cbc(Rc2Engine::new());
+    for (length, expected) in RC2_CBC {
+        round_trip(&mut fixed, &params, &message[..length], &bytes(expected));
+    }
+    #[cfg(feature = "alloc")]
+    {
+        let mut allocating = CtsBlockCipher::cbc(Rc2Engine::new());
+        for (length, expected) in RC2_CBC {
             round_trip(
                 &mut allocating,
                 &params,
