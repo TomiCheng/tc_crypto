@@ -1,0 +1,26 @@
+[package]
+name = "tc_drbg"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "NIST SP 800-90A deterministic random bit generators: HMAC_DRBG, Hash_DRBG and AES CTR_DRBG, after Bouncy Castle's SP800 DRBGs, with no allocator."
+readme = "README.md"
+documentation = "https://docs.rs/tc_drbg"
+keywords = ["drbg", "random", "sp800-90a", "cryptography", "no-std"]
+categories = ["cryptography", "no-std"]
+include = ["src/**", "tests/**", "README.md", "CHANGELOG.md", "LICENSE-MIT", "LICENSE-APACHE"]
+
+[dependencies]
+rand_core = { version = "0.10.1", default-features = false }
+tc_block_cipher = "0.1.0"
+tc_digest = "0.1.0"
+tc_macs = "0.1.0"
+tc_zeroize = "0.1.0"
+
+[dev-dependencies]
+rand = "0.10.3"
+tc_aes = "0.1.0"
+tc_macs = { version = "0.1.0", features = ["hmac", "alloc"] }
+tc_sha = "0.1.1"

@@ -239,6 +239,32 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1c37ed9f10c96ccd2c46a9a2b872070772c6385621665f4ba076b6d779e6be6f"
 
 [[package]]
+name = "tc_drbg"
+version = "0.1.0"
+dependencies = [
+ "rand",
+ "rand_core",
+ "tc_aes",
+ "tc_block_cipher",
+ "tc_digest",
+ "tc_macs",
+ "tc_sha",
+ "tc_zeroize",
+]
+
+[[package]]
+name = "tc_macs"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c2cdad045880de68459b3cdd2654abf07f4faf336398bbe55c5d08ac906f122f"
+dependencies = [
+ "tc_block_cipher",
+ "tc_block_modes",
+ "tc_digest",
+ "tc_zeroize",
+]
+
+[[package]]
 name = "tc_misc_block_cipher"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -302,6 +328,16 @@ name = "tc_runtime"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5d9f70ee51cf053b9ba11bb992cb141769d0968ac50e4f92f00e2546ca4faae3"
+
+[[package]]
+name = "tc_sha"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2210d651adb5c6d7e72c787dfba177646f72954475eaf8b665a42c1ae06708cb"
+dependencies = [
+ "tc_digest",
+ "tc_zeroize",
+]
 
 [[package]]
 name = "tc_stream_cipher"
