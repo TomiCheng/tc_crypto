@@ -72,10 +72,20 @@ which, and matches the phrase within one line, so never wrap a line between
 stated in its doc comment. The block adapters wipe their buffers on reset and
 on drop through `Zeroizing`, which keeps an outer `Drop` out of the way.
 
+`tc_drbg` holds Bouncy Castle's SP 800-90A DRBGs, `HmacDrbg`, `HashDrbg`
+and `CtrDrbg` (AES only), with their state inline and no allocator: the
+entropy of one seeding is buffered up to 256 bytes, and seed material is fed
+to the primitive in parts rather than concatenated. They implement
+`rand_core::TryRng` with `DrbgError`, so the request limit and the reseed
+limit are errors through `rand_core` too; a caller who wants a `CryptoRng`
+wraps one in `UnwrapErr` and chooses the panic. They never reseed on their
+own, since they hold no entropy source.
+
 `unsafe` code is forbidden at the crate root.
 
 Rust 1.85 is guaranteed for every build, since every dependency is a `tc_*`
-crate; dev-dependencies are exempt. The MSRV job therefore runs `cargo check`
+crate or `rand_core` 0.10, which `tc_drbg` takes and which declares 1.85 as
+well; dev-dependencies are exempt. The MSRV job therefore runs `cargo check`
 on 1.85 with and without `alloc`; tests run on stable. `.cargo/config.toml`
 sets `incompatible-rust-versions = "allow"` so `Cargo.lock` tracks the latest
 releases and stable CI tests what current toolchains resolve. Adding a

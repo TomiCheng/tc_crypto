@@ -7,8 +7,9 @@ AEAD and asymmetric-block-cipher contracts together:
 [`tc_aead_cipher`](https://crates.io/crates/tc_aead_cipher) and
 [`tc_asym_cipher`](https://crates.io/crates/tc_asym_cipher). It holds
 `tc_buffered_cipher`, which puts all four families behind one buffered
-interface, and `tc_cts_modes`, cipher text stealing behind that
-interface. Each crate is published separately and keeps its own README,
+interface, `tc_cts_modes`, cipher text stealing behind that
+interface, and `tc_drbg`, the SP 800-90A random bit generators over those
+primitives. Each crate is published separately and keeps its own README,
 changelog, and validation commands.
 
 [![CI](https://github.com/TomiCheng/tc_crypto/actions/workflows/ci.yml/badge.svg)](https://github.com/TomiCheng/tc_crypto/actions/workflows/ci.yml)
@@ -21,6 +22,7 @@ changelog, and validation commands.
 | --- | --- | --- |
 | [`tc_buffered_cipher`](tc_buffered_cipher) | [![crates.io](https://img.shields.io/crates/v/tc_buffered_cipher.svg)](https://crates.io/crates/tc_buffered_cipher) [![docs.rs](https://docs.rs/tc_buffered_cipher/badge.svg)](https://docs.rs/tc_buffered_cipher) | The `BufferedCipher` and `BufferedCipherInit` contracts, the Rust form of Bouncy Castle's `IBufferedCipher`, with adapters for block modes with or without padding, stream ciphers, AEADs and asymmetric block ciphers. `no_std`, no `unsafe`; a default-off `alloc` feature adds adapters sized at run time. Constant time exactly when the wrapped cipher is; padded decryption is a padding oracle and is documented as one. |
 | [`tc_cts_modes`](tc_cts_modes) | [![crates.io](https://img.shields.io/crates/v/tc_cts_modes.svg)](https://crates.io/crates/tc_cts_modes) [![docs.rs](https://docs.rs/tc_cts_modes/badge.svg)](https://docs.rs/tc_cts_modes) | Cipher text stealing over ECB and CBC, Bouncy Castle's `CtsBlockCipher`, behind the `BufferedCipher` interface: a ciphertext as long as a plaintext of at least one block. `no_std`, no `unsafe`; a default-off `alloc` feature adds the form sized at run time. Constant time exactly when the block cipher is. |
+| [`tc_drbg`](tc_drbg) | [![crates.io](https://img.shields.io/crates/v/tc_drbg.svg)](https://crates.io/crates/tc_drbg) [![docs.rs](https://docs.rs/tc_drbg/badge.svg)](https://docs.rs/tc_drbg) | NIST SP 800-90A HMAC_DRBG, Hash_DRBG and AES CTR_DRBG, Bouncy Castle's SP800 DRBGs, seeded from a caller's `rand_core` source and usable as one: limits are errors, never panics. `no_std`, no `unsafe`, no allocator. Constant time exactly when the MAC, digest or block cipher is; the state is wiped on drop. |
 
 ## Requirements
 
@@ -28,8 +30,8 @@ Rust 1.85 or later, edition 2024. Every crate builds without `std` and
 reaches the heap only through its default-off `alloc` feature.
 
 Rust 1.85 is the earliest compiler for edition 2024, and it is guaranteed for
-every build, since every dependency is a `tc_*` crate; dev-dependencies used
-only by tests are exempt. The workspace lock tracks the latest dependency
+every build, since every dependency is a `tc_*` crate or `rand_core` 0.10,
+which declares 1.85 too; dev-dependencies used only by tests are exempt. The workspace lock tracks the latest dependency
 releases, so CI on stable tests what a user on a current toolchain resolves.
 
 ## Workspace checks
