@@ -181,7 +181,7 @@ checksum = "fd48e2241de64995ba803397f5557cc52b82e40e5e25d1ae16422d8713627db7"
 
 [[package]]
 name = "tc_buffered_cipher"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "rand",
  "tc_aead_cipher",
