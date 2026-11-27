@@ -40,12 +40,19 @@ and one adapter per family under Bouncy Castle's names: the block adapters over
 `BufferedAeadCipher` over `tc_aead_cipher`, and the asymmetric adapters over
 `tc_asym_cipher`. It depends on those crates and `tc_zeroize` on every target,
 and CI enforces that set with `cargo tree` on the `wasm32-unknown-unknown`,
-`aarch64-unknown-none` and x86 targets. Its only feature, `alloc`, is
+`aarch64-unknown-none` and x86 targets. Its `alloc` feature is
 default-off and adds `BufferedBlockCipher`, `PaddedBufferedBlockCipher` and
 `BufferedAsymmetricBlockCipher`, which size their buffers from the mode or the
 key at run time; the `Fixed` forms keep theirs inline. The stream, AEAD and
 asymmetric support is deliberately not behind features: making it optional now
-would break builds that disable default features.
+would break builds that disable default features. The default-off `ies`
+feature, which implies `alloc`, holds Bouncy Castle's `IesEngine`: `IesEngine`
+with XOR and `IesCipherEngine` over a `BufferedCipher`, with their params and
+`IesError`. It adds `tc_agreement`, `tc_kdf`, `tc_macs` and `tc_constant_time`
+to the dependencies, and only then. IES lives here rather than in a crate of
+its own because the cipher engine needs `BufferedCipher` and a
+`BufferedIesCipher` adapter needs the engine, which as two crates would depend
+on each other.
 
 The traits keep their error and parameter types generic and need no
 allocator; type erasure for a name-based factory belongs to a crate built on

@@ -138,6 +138,7 @@ jobs:
           for target in aarch64-unknown-none wasm32-unknown-unknown x86_64-unknown-linux-gnu i686-unknown-linux-gnu; do
             check 'tc_aead_cipher tc_asym_cipher tc_block_cipher tc_block_modes tc_block_padding tc_buffered_cipher tc_constant_time tc_stream_cipher tc_zeroize' -p tc_buffered_cipher --target "$target"
             check 'tc_aead_cipher tc_asym_cipher tc_block_cipher tc_block_modes tc_block_padding tc_buffered_cipher tc_constant_time tc_stream_cipher tc_zeroize' -p tc_buffered_cipher --target "$target" --features alloc
+            check 'tc_aead_cipher tc_agreement tc_asym_cipher tc_block_cipher tc_block_modes tc_block_padding tc_buffered_cipher tc_constant_time tc_digest tc_kdf tc_macs tc_stream_cipher tc_zeroize' -p tc_buffered_cipher --target "$target" --features ies
             check 'tc_aead_cipher tc_asym_cipher tc_block_cipher tc_block_modes tc_block_padding tc_buffered_cipher tc_constant_time tc_cts_modes tc_stream_cipher tc_zeroize' -p tc_cts_modes --target "$target"
             check 'tc_aead_cipher tc_asym_cipher tc_block_cipher tc_block_modes tc_block_padding tc_buffered_cipher tc_constant_time tc_cts_modes tc_stream_cipher tc_zeroize' -p tc_cts_modes --target "$target" --features alloc
             check 'rand_core tc_block_cipher tc_digest tc_drbg tc_macs tc_zeroize' -p tc_drbg --target "$target"
