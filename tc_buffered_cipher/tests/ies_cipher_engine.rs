@@ -6,7 +6,8 @@
 use tc_bigint::{ArrayEncoding, PaddedBigUint};
 use tc_block_modes::CbcBlockCipher;
 use tc_buffered_cipher::{
-    CipherDirection, IesCipherEngine, IesCipherParamsRef, IesError, PaddedBufferedBlockCipher,
+    CipherDirection, IesCipherEngine, IesCipherParamsOwned, IesCipherParamsRef, IesError,
+    PaddedBufferedBlockCipher,
 };
 use tc_ec_agreement::EcdhBasicAgreement;
 use tc_ec_key::{EcPrivateKey, EcPublicKey};
@@ -123,4 +124,30 @@ fn a_tampered_last_block_fails_the_mac_before_the_padding_is_checked() {
             Err(IesError::InvalidMac)
         ));
     });
+}
+
+#[test]
+fn owned_params_seal_as_borrowed_ones_do() {
+    let curve = SECP192R1.ct_curve();
+    let g = SECP192R1.ct_generator(&curve);
+    let d = <PaddedBigUint as ArrayEncoding<u8>>::from_be(&hex(
+        "1a8d598fc15bf0fd89030b5cb1111aeb92ae8baf5ea475fb",
+    ))
+    .unwrap();
+    let q = curve
+        .decode_point(&hex("0262b12d60690cdcf330babab6e69763b471f994dd702d16a5"))
+        .unwrap();
+    let private_key = EcPrivateKey::<Curve<'_>>::new(g.clone(), d).unwrap();
+    let public_key = EcPublicKey::<Curve<'_>>::new(g, &q).unwrap();
+    let params = IesCipherParamsOwned::new(D.to_vec(), E.to_vec(), 64, 128)
+        .with_iv(hex("000102030405060708090a0b0c0d0e0f"));
+
+    let mut sender = engine();
+    sender
+        .init(CipherDirection::Encrypt, &private_key, &public_key, &params)
+        .unwrap();
+    assert_eq!(
+        sender.process_block(&hex(MESSAGE)).unwrap(),
+        hex("f246b0e26a2711992cac9c590d08e45c5e730b7c0f4218bb064e27b7dd7c8a3bd8bf01c3")
+    );
 }

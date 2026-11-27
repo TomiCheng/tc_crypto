@@ -9,7 +9,8 @@ All notable changes to `tc_buffered_cipher` are documented in this file.
 - The `ies` feature, off by default and implying `alloc`, with Bouncy Castle's
   `IesEngine`: `IesEngine` over an agreement, a KDF and a MAC with XOR, and
   `IesCipherEngine` with a buffered block cipher, their `IesParams` and
-  `IesCipherParams` with the borrowed `IesParamsRef` and `IesCipherParamsRef`,
+  `IesCipherParams` with the borrowed `IesParamsRef` and `IesCipherParamsRef`
+  and the owned `IesParamsOwned` and `IesCipherParamsOwned`,
   and `IesError`. It depends on `tc_agreement`, `tc_kdf`, `tc_macs` and
   `tc_constant_time`, which builds without the feature do not pull in.
 

@@ -142,6 +142,10 @@ fn every_public_api_and_implemented_trait_method_has_an_unambiguous_timing_doc()
         ),
         ("ies/ies_error.rs", include_str!("../src/ies/ies_error.rs")),
         (
+            "ies/ies_params_owned.rs",
+            include_str!("../src/ies/ies_params_owned.rs"),
+        ),
+        (
             "ies/ies_params_ref.rs",
             include_str!("../src/ies/ies_params_ref.rs"),
         ),

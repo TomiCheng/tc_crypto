@@ -25,8 +25,9 @@ ciphers, AEADs and asymmetric block ciphers, after Bouncy Castle's
   pieces.
 - `IesEngine`, `IesCipherEngine` (`ies`) — Bouncy Castle's IES over an
   agreement, a KDF and a MAC, with XOR or with a buffered block cipher.
-- `IesParamsRef`, `IesCipherParamsRef` (`ies`) — the derivation and encoding
-  vectors and the key sizes of IES.
+- `IesParamsRef`, `IesParamsOwned`, `IesCipherParamsRef`,
+  `IesCipherParamsOwned` (`ies`) — the derivation and encoding vectors and the
+  key sizes of IES, borrowed or owned.
 - `IesError` (`ies`) — the failures of IES.
 - `CipherDirection` — encryption or decryption.
 - `BufferedError` — the failures of the block, stream and asymmetric

@@ -37,6 +37,60 @@ struct Session {
 /// are static: no ephemeral public key is generated or sent.
 ///
 /// Constant time when the agreement, KDF, MAC and cipher it wraps are; lengths are public.
+///
+/// # Example
+///
+/// ECIES over secp256r1 with AES-128/CBC and PKCS#7, KDF2 and HMAC over SHA-256:
+///
+/// ```
+/// use tc_aes::AesEngine;
+/// use tc_asym_cipher::{KeyPairGenerator, KeyPairGeneratorInit};
+/// use tc_block_modes::CbcBlockCipher;
+/// use tc_buffered_cipher::{
+///     CipherDirection, IesCipherEngine, IesCipherParamsRef, PaddedBufferedBlockCipher,
+/// };
+/// use tc_ec_agreement::EcdhBasicAgreement;
+/// use tc_ec_key::{EcKeyGenerationParams, EcKeyPairGenerator};
+/// use tc_fp_custom::named_curves::SECP256R1;
+/// use tc_fp_custom::{SecP256R1FieldElement, SecPCtCurve};
+/// use tc_kdf::kdf::Kdf2;
+/// use tc_macs::Hmac;
+/// use tc_sha::Sha256Digest;
+///
+/// type Curve<'a> = &'a SecPCtCurve<SecP256R1FieldElement>;
+///
+/// // Each party has a static key pair on the same curve
+/// let curve = SECP256R1.ct_curve();
+/// let mut rng = rand::rng();
+/// let mut generator = EcKeyPairGenerator::<Curve<'_>, _>::new(&mut rng);
+/// generator.init(&EcKeyGenerationParams::new(SECP256R1.ct_generator(&curve)))?;
+/// let (alice_public, alice_private) = generator.generate_key_pair()?;
+/// let (bob_public, bob_private) = generator.generate_key_pair()?;
+///
+/// // A 128-bit AES key and a 256-bit MAC key, with an IV of this message alone
+/// let iv = [0x24; 16];
+/// let params = IesCipherParamsRef::new(b"", b"", 256, 128).with_iv(&iv);
+/// let engine = || {
+///     IesCipherEngine::new(
+///         EcdhBasicAgreement::new(),
+///         Kdf2::new(Sha256Digest::new()),
+///         Hmac::new(Sha256Digest::new()),
+///         PaddedBufferedBlockCipher::new(CbcBlockCipher::new(AesEngine::new())),
+///     )
+/// };
+///
+/// // Alice seals with her private key and Bob's public key
+/// let mut alice = engine();
+/// alice.init(CipherDirection::Encrypt, &alice_private, &bob_public, &params)?;
+/// let sealed = alice.process_block(b"attack at dawn")?;
+///
+/// // Bob opens it with his private key and Alice's public key
+/// let mut bob = engine();
+/// bob.init(CipherDirection::Decrypt, &bob_private, &alice_public, &params)?;
+/// let opened = bob.process_block(&sealed)?;
+/// # assert_eq!(opened, b"attack at dawn");
+/// # Ok::<(), Box<dyn std::error::Error>>(())
+/// ```
 pub struct IesCipherEngine<A, K, M, C> {
     agreement: A,
     kdf: K,

@@ -4,7 +4,7 @@
 #![cfg(feature = "ies")]
 
 use tc_bigint::{ArrayEncoding, PaddedBigUint};
-use tc_buffered_cipher::{CipherDirection, IesEngine, IesError, IesParamsRef};
+use tc_buffered_cipher::{CipherDirection, IesEngine, IesError, IesParamsOwned, IesParamsRef};
 use tc_ec_agreement::EcdhBasicAgreement;
 use tc_ec_key::{EcPrivateKey, EcPublicKey};
 use tc_fp_custom::named_curves::SECP192R1;
@@ -130,4 +130,26 @@ fn a_mac_key_length_that_is_not_whole_bytes_is_refused() {
         sender.process_block(b"message"),
         Err(IesError::NotInitialised)
     ));
+}
+
+#[test]
+fn owned_params_seal_as_borrowed_ones_do() {
+    let curve = SECP192R1.ct_curve();
+    let g = SECP192R1.ct_generator(&curve);
+    let d = <PaddedBigUint as ArrayEncoding<u8>>::from_be(&hex(
+        "1a8d598fc15bf0fd89030b5cb1111aeb92ae8baf5ea475fb",
+    ))
+    .unwrap();
+    let q = curve
+        .decode_point(&hex("0262b12d60690cdcf330babab6e69763b471f994dd702d16a5"))
+        .unwrap();
+    let private_key = EcPrivateKey::<Curve<'_>>::new(g.clone(), d).unwrap();
+    let public_key = EcPublicKey::<Curve<'_>>::new(g, &q).unwrap();
+    let params = IesParamsOwned::new(D.to_vec(), E.to_vec(), 64);
+
+    let mut sender = engine();
+    sender
+        .init(CipherDirection::Encrypt, &private_key, &public_key, &params)
+        .unwrap();
+    assert_eq!(sender.process_block(&hex(MESSAGE)).unwrap(), hex(SEALED));
 }

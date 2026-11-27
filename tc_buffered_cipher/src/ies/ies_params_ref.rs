@@ -39,7 +39,6 @@ impl IesParams for IesParamsRef<'_> {
 
 /// Borrowed [`IesCipherParams`]; nothing is checked here, each length is checked by the engine.
 /// Constant time: it only holds borrowed values.
-///
 #[derive(Clone, Copy, Debug)]
 pub struct IesCipherParamsRef<'a> {
     ies: IesParamsRef<'a>,

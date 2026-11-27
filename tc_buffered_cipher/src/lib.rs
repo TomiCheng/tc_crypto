@@ -111,8 +111,8 @@ pub use cipher_direction::CipherDirection;
 pub use errors::BufferedError;
 #[cfg(feature = "ies")]
 pub use ies::{
-    IesCipherEngine, IesCipherParams, IesCipherParamsRef, IesEngine, IesError, IesParams,
-    IesParamsRef, PrimitiveError,
+    IesCipherEngine, IesCipherParams, IesCipherParamsOwned, IesCipherParamsRef, IesEngine,
+    IesError, IesParams, IesParamsOwned, IesParamsRef, PrimitiveError,
 };
 pub use stream::BufferedStreamCipher;
 pub use traits::BufferedCipher;

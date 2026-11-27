@@ -31,6 +31,54 @@ struct Session {
 /// never covers the MAC key of another.
 ///
 /// Constant time when the agreement, KDF and MAC it wraps are; lengths are public.
+///
+/// # Example
+///
+/// ECIES over secp256r1, with KDF2 and HMAC over SHA-256:
+///
+/// ```
+/// use tc_asym_cipher::{KeyPairGenerator, KeyPairGeneratorInit};
+/// use tc_buffered_cipher::{CipherDirection, IesEngine, IesParamsRef};
+/// use tc_ec_agreement::EcdhBasicAgreement;
+/// use tc_ec_key::{EcKeyGenerationParams, EcKeyPairGenerator};
+/// use tc_fp_custom::named_curves::SECP256R1;
+/// use tc_fp_custom::{SecP256R1FieldElement, SecPCtCurve};
+/// use tc_kdf::kdf::Kdf2;
+/// use tc_macs::Hmac;
+/// use tc_sha::Sha256Digest;
+///
+/// type Curve<'a> = &'a SecPCtCurve<SecP256R1FieldElement>;
+///
+/// // Each party has a static key pair on the same curve
+/// let curve = SECP256R1.ct_curve();
+/// let mut rng = rand::rng();
+/// let mut generator = EcKeyPairGenerator::<Curve<'_>, _>::new(&mut rng);
+/// generator.init(&EcKeyGenerationParams::new(SECP256R1.ct_generator(&curve)))?;
+/// let (alice_public, alice_private) = generator.generate_key_pair()?;
+/// let (bob_public, bob_private) = generator.generate_key_pair()?;
+///
+/// // A derivation vector of this message alone, so that no two messages share a keystream
+/// let params = IesParamsRef::new(b"message 1", b"", 256);
+/// let engine = || {
+///     IesEngine::new(
+///         EcdhBasicAgreement::new(),
+///         Kdf2::new(Sha256Digest::new()),
+///         Hmac::new(Sha256Digest::new()),
+///     )
+/// };
+///
+/// // Alice seals with her private key and Bob's public key
+/// let mut alice = engine();
+/// alice.init(CipherDirection::Encrypt, &alice_private, &bob_public, &params)?;
+/// let sealed = alice.process_block(b"attack at dawn")?;
+///
+/// // Bob opens it with his private key and Alice's public key
+/// let mut bob = engine();
+/// bob.init(CipherDirection::Decrypt, &bob_private, &alice_public, &params)?;
+/// let opened = bob.process_block(&sealed)?;
+/// # assert_eq!(opened, b"attack at dawn");
+/// # Ok::<(), Box<dyn std::error::Error>>(())
+/// ```
 pub struct IesEngine<A, K, M> {
     agreement: A,
     kdf: K,
