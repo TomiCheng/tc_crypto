@@ -139,6 +139,20 @@ where
     <M as Mac>::Error: Error + Send + Sync + 'static,
     MI: Error + Send + Sync + 'static,
 {
+    /// The length of the output of [`process_block`](Self::process_block) for `input_len` bytes:
+    /// the message and the MAC on encryption, at most the message on decryption. Fails before
+    /// `init` and when the length overflows. Constant time.
+    pub fn output_len(&self, input_len: usize) -> Result<usize, IesError> {
+        let session = self.session.as_ref().ok_or(IesError::NotInitialised)?;
+        let mac_size = self.mac.mac_size();
+        match session.direction {
+            CipherDirection::Encrypt => input_len
+                .checked_add(mac_size)
+                .ok_or(IesError::LengthOverflow),
+            CipherDirection::Decrypt => Ok(input_len.saturating_sub(mac_size)),
+        }
+    }
+
     /// Encrypts `input` into `C || T`, or checks and decrypts `C || T`, as `init` chose. The
     /// MAC is compared without stopping at the first difference, and on decryption it is
     /// checked before any plaintext is formed. Constant time with respect to the keys and the

@@ -48,7 +48,8 @@ asymmetric support is deliberately not behind features: making it optional now
 would break builds that disable default features. The default-off `ies`
 feature, which implies `alloc`, holds Bouncy Castle's `IesEngine`: `IesEngine`
 with XOR and `IesCipherEngine` over a `BufferedCipher`, with their params and
-`IesError`. It adds `tc_agreement`, `tc_kdf`, `tc_macs` and `tc_constant_time`
+`IesError`, and `BufferedIesCipher`, which puts either engine behind
+`BufferedCipher` and buffers the message until `do_final`. It adds `tc_agreement`, `tc_kdf`, `tc_macs` and `tc_constant_time`
 to the dependencies, and only then. IES lives here rather than in a crate of
 its own because the cipher engine needs `BufferedCipher` and a
 `BufferedIesCipher` adapter needs the engine, which as two crates would depend

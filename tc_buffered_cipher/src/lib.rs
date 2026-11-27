@@ -21,7 +21,9 @@
 //!   key, and the message is encrypted, by XOR or by a buffered block cipher,
 //!   and tagged. Both parties' keys are static, as in Bouncy Castle, so the XOR
 //!   engine reuses its keystream for two messages under the same keys and
-//!   derivation vector: give each message its own.
+//!   derivation vector: give each message its own. `BufferedIesCipher`
+//!   puts either engine behind [`BufferedCipher`], buffering the message until
+//!   `do_final`.
 //!
 //! Every adapter takes input in pieces of any size, holds back what its cipher
 //! cannot process yet and finishes in `do_final`; the sizing methods say how
@@ -111,8 +113,8 @@ pub use cipher_direction::CipherDirection;
 pub use errors::BufferedError;
 #[cfg(feature = "ies")]
 pub use ies::{
-    IesCipherEngine, IesCipherParams, IesCipherParamsOwned, IesCipherParamsRef, IesEngine,
-    IesError, IesParams, IesParamsOwned, IesParamsRef, PrimitiveError,
+    BufferedIesCipher, IesCipherEngine, IesCipherParams, IesCipherParamsOwned, IesCipherParamsRef,
+    IesEngine, IesError, IesInitParamsRef, IesParams, IesParamsOwned, IesParamsRef, PrimitiveError,
 };
 pub use stream::BufferedStreamCipher;
 pub use traits::BufferedCipher;

@@ -19,6 +19,10 @@ pub enum IesError {
     InputTooShort,
     /// The MAC over the ciphertext does not match.
     InvalidMac,
+    /// The output buffer given to `BufferedIesCipher::do_final` is shorter than `output_len(0)`.
+    OutputTooShort,
+    /// A message length does not fit in `usize` once the MAC and the cipher's growth are added.
+    LengthOverflow,
     /// The key agreement failed, such as on a public key of another curve.
     Agreement(PrimitiveError),
     /// The KDF failed.
@@ -43,6 +47,8 @@ impl fmt::Display for IesError {
             }
             Self::InputTooShort => f.write_str("IES input is shorter than the MAC"),
             Self::InvalidMac => f.write_str("IES MAC does not match"),
+            Self::OutputTooShort => f.write_str("IES output buffer is too short"),
+            Self::LengthOverflow => f.write_str("IES message length overflows usize"),
             Self::Agreement(_) => f.write_str("IES key agreement failed"),
             Self::Kdf(_) => f.write_str("IES KDF failed"),
             Self::Mac(_) => f.write_str("IES MAC failed"),

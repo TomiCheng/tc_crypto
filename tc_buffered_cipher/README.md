@@ -28,6 +28,10 @@ ciphers, AEADs and asymmetric block ciphers, after Bouncy Castle's
 - `IesParamsRef`, `IesParamsOwned`, `IesCipherParamsRef`,
   `IesCipherParamsOwned` (`ies`) — the derivation and encoding vectors and the
   key sizes of IES, borrowed or owned.
+- `BufferedIesCipher` (`ies`) — an IES engine behind `BufferedCipher`, taking
+  the whole message in `do_final`.
+- `IesInitParamsRef` (`ies`) — the keys and IES params `BufferedIesCipher` is
+  initialized with.
 - `IesError` (`ies`) — the failures of IES.
 - `CipherDirection` — encryption or decryption.
 - `BufferedError` — the failures of the block, stream and asymmetric

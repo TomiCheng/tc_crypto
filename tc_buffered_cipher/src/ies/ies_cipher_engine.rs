@@ -160,6 +160,21 @@ where
     <C as BufferedCipher>::Error: Error + Send + Sync + 'static,
     CV: Error + Send + Sync + 'static,
 {
+    /// An upper bound on the output of [`process_block`](Self::process_block) for `input_len`
+    /// bytes: the message, a block of padding and the MAC on encryption, at most the message on
+    /// decryption. Fails before `init` and when the length overflows. Constant time.
+    pub fn output_len(&self, input_len: usize) -> Result<usize, IesError> {
+        let session = self.session.as_ref().ok_or(IesError::NotInitialised)?;
+        let mac_size = self.mac.mac_size();
+        match session.direction {
+            CipherDirection::Encrypt => input_len
+                .checked_add(self.cipher.block_size())
+                .and_then(|len| len.checked_add(mac_size))
+                .ok_or(IesError::LengthOverflow),
+            CipherDirection::Decrypt => Ok(input_len.saturating_sub(mac_size)),
+        }
+    }
+
     /// Encrypts `input` into `C || T`, or checks and decrypts `C || T`, as `init` chose. On
     /// decryption the MAC is compared, without stopping at the first difference, before the
     /// cipher's final block, so that a padding failure cannot be told apart from a forged
