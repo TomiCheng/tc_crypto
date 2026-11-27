@@ -107,6 +107,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "tc_agreement"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1a235ecc11d3600edf2d7466a4023ea76a587e32d2084820ad434fb53a266d55"
+
+[[package]]
 name = "tc_ascon_aead"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -175,20 +181,30 @@ checksum = "fd48e2241de64995ba803397f5557cc52b82e40e5e25d1ae16422d8713627db7"
 
 [[package]]
 name = "tc_buffered_cipher"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "rand",
  "tc_aead_cipher",
  "tc_aes",
+ "tc_agreement",
  "tc_ascon_aead",
  "tc_asym_cipher",
  "tc_asym_encoding",
+ "tc_bigint",
  "tc_block_cipher",
  "tc_block_modes",
  "tc_block_padding",
  "tc_chacha",
+ "tc_constant_time",
+ "tc_ec_agreement",
+ "tc_ec_key",
+ "tc_fp_custom",
+ "tc_kdf",
+ "tc_macs",
  "tc_rsa",
+ "tc_sha",
  "tc_stream_cipher",
+ "tc_twofish",
  "tc_zeroize",
 ]
 
@@ -249,6 +265,67 @@ dependencies = [
  "tc_digest",
  "tc_macs",
  "tc_sha",
+ "tc_zeroize",
+]
+
+[[package]]
+name = "tc_ec_agreement"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cee2e2472ee155cc2e2481b67c017f186bd69b8f52bb2ef8d36136f1a8af9235"
+dependencies = [
+ "tc_agreement",
+ "tc_bigint",
+ "tc_digest",
+ "tc_ec_core",
+ "tc_ec_key",
+ "tc_modular",
+ "tc_zeroize",
+]
+
+[[package]]
+name = "tc_ec_core"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e08e2ada75e70c99a940d37dd48ff23d2361052c9e7315966928dad6798303a3"
+dependencies = [
+ "tc_bigint",
+ "tc_constant_time",
+]
+
+[[package]]
+name = "tc_ec_key"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f23308268814dc0ecfbdf0fa9faa7dde6fe685dcd7b392c4ec3bf172d798678b"
+dependencies = [
+ "rand_core",
+ "tc_asym_cipher",
+ "tc_bigint",
+ "tc_ec_core",
+ "tc_zeroize",
+]
+
+[[package]]
+name = "tc_fp_custom"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1bf518e9e61bfc672b999e8379c0d13b144e35b0729181875016311aa0b314e9"
+dependencies = [
+ "tc_bigint",
+ "tc_constant_time",
+ "tc_ec_core",
+ "tc_zeroize",
+]
+
+[[package]]
+name = "tc_kdf"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ea8848fcc1aea8b47c7a1150150cb1fa237ba3a39a48de83307d11c3a10a3e1d"
+dependencies = [
+ "tc_digest",
+ "tc_macs",
  "tc_zeroize",
 ]
 
@@ -345,6 +422,16 @@ version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9a460a4a240dee7ffd827185d8e3e966e20a3e9fb4a9fb9377fc93b33045723b"
 dependencies = [
+ "tc_zeroize",
+]
+
+[[package]]
+name = "tc_twofish"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d69e84706ae566e96e14cc3bce060c857b88879b181a7389ba40fa7951f00fc8"
+dependencies = [
+ "tc_block_cipher",
  "tc_zeroize",
 ]
 

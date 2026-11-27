@@ -132,6 +132,31 @@ fn every_public_api_and_implemented_trait_method_has_an_unambiguous_timing_doc()
             "stream/buffered_stream_cipher.rs",
             include_str!("../src/stream/buffered_stream_cipher.rs"),
         ),
+        (
+            "ies/buffered_ies_cipher.rs",
+            include_str!("../src/ies/buffered_ies_cipher.rs"),
+        ),
+        (
+            "ies/ies_cipher_engine.rs",
+            include_str!("../src/ies/ies_cipher_engine.rs"),
+        ),
+        (
+            "ies/ies_engine.rs",
+            include_str!("../src/ies/ies_engine.rs"),
+        ),
+        ("ies/ies_error.rs", include_str!("../src/ies/ies_error.rs")),
+        (
+            "ies/ies_init_params_ref.rs",
+            include_str!("../src/ies/ies_init_params_ref.rs"),
+        ),
+        (
+            "ies/ies_params_owned.rs",
+            include_str!("../src/ies/ies_params_owned.rs"),
+        ),
+        (
+            "ies/ies_params_ref.rs",
+            include_str!("../src/ies/ies_params_ref.rs"),
+        ),
     ] {
         let (checked, missing) = missing_timing_docs(source);
         if checked == 0 {
