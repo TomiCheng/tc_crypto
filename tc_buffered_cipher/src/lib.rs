@@ -15,6 +15,15 @@
 //! - [`FixedBufferedAsymmetricBlockCipher`] and `BufferedAsymmetricBlockCipher`
 //!   (`alloc`) — a `tc_asym_cipher` engine or encoding, such as RSA with
 //!   PKCS#1 v1.5 or OAEP, taking its one block in pieces.
+//! - `IesEngine` and `IesCipherEngine` (`ies`) — Bouncy Castle's
+//!   Integrated Encryption Scheme: a `tc_agreement` agreement gives a shared
+//!   secret, a `tc_kdf` KDF turns it into an encryption key and a `tc_macs` MAC
+//!   key, and the message is encrypted, by XOR or by a buffered block cipher,
+//!   and tagged. Both parties' keys are static, as in Bouncy Castle, so the XOR
+//!   engine reuses its keystream for two messages under the same keys and
+//!   derivation vector: give each message its own. `BufferedIesCipher`
+//!   puts either engine behind [`BufferedCipher`], buffering the message until
+//!   `do_final`.
 //!
 //! Every adapter takes input in pieces of any size, holds back what its cipher
 //! cannot process yet and finishes in `do_final`; the sizing methods say how
@@ -26,7 +35,9 @@
 //!
 //! The crate is `no_std` and contains no `unsafe` code. The default-off `alloc`
 //! feature adds the adapters that size their buffers from the mode or the key
-//! at run time; the `Fixed` forms keep theirs inline.
+//! at run time; the `Fixed` forms keep theirs inline. The default-off `ies`
+//! feature, which implies `alloc`, adds the IES engines and the dependencies on
+//! `tc_agreement`, `tc_kdf`, `tc_macs` and `tc_constant_time` they need.
 //!
 //! Every adapter documents its timing: each is constant time exactly when the
 //! cipher it wraps is, and lengths are public. Padded decryption needs care: the
@@ -82,6 +93,8 @@ mod asym;
 mod block;
 mod cipher_direction;
 mod errors;
+#[cfg(feature = "ies")]
+mod ies;
 mod stream;
 mod traits;
 
@@ -98,6 +111,11 @@ pub use block::FixedPaddedBufferedBlockCipher;
 pub use block::PaddedBufferedBlockCipher;
 pub use cipher_direction::CipherDirection;
 pub use errors::BufferedError;
+#[cfg(feature = "ies")]
+pub use ies::{
+    BufferedIesCipher, IesCipherEngine, IesCipherParams, IesCipherParamsOwned, IesCipherParamsRef,
+    IesEngine, IesError, IesInitParamsRef, IesParams, IesParamsOwned, IesParamsRef, PrimitiveError,
+};
 pub use stream::BufferedStreamCipher;
 pub use traits::BufferedCipher;
 pub use traits::BufferedCipherInit;

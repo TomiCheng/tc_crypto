@@ -18,6 +18,13 @@ all-features = true
 [features]
 default = []
 alloc = ["tc_zeroize/alloc"]
+ies = [
+    "alloc",
+    "dep:tc_agreement",
+    "dep:tc_constant_time",
+    "dep:tc_kdf",
+    "dep:tc_macs",
+]
 
 [dependencies]
 tc_aead_cipher = "0.1.0"
@@ -27,6 +34,10 @@ tc_stream_cipher = "0.1.0"
 tc_block_modes = "0.1.0"
 tc_block_padding = "0.1.0"
 tc_zeroize = "0.1.0"
+tc_agreement = { version = "0.1.0", optional = true }
+tc_constant_time = { version = "0.1.0", optional = true }
+tc_kdf = { version = "0.1.0", optional = true }
+tc_macs = { version = "0.1.0", optional = true }
 
 [dev-dependencies]
 rand = "0.10.3"
@@ -36,3 +47,10 @@ tc_ascon_aead = "0.1.0"
 tc_chacha = "0.1.0"
 tc_block_modes = { version = "0.1.0", features = ["alloc"] }
 tc_rsa = "0.2.0"
+tc_bigint = { version = "0.1.0", features = ["alloc"] }
+tc_ec_agreement = "0.1.0"
+tc_ec_key = "0.1.0"
+tc_fp_custom = { version = "0.1.0", features = ["small-curves"] }
+tc_macs = { version = "0.1.0", features = ["hmac", "alloc"] }
+tc_sha = "0.1.1"
+tc_twofish = "0.1.0"
